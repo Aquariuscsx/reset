@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" href="/static/css/common.css">
+    <script src="/static/js/jquery-3.3.1.js"></script>
+    <style type="text/css">
+
+
+        #head_left{
+            float: left;
+
+        }
+
+         #head_left>p{
+             float: left;
+             margin: 10px;
+             font-size: 16px;
+        }
+
+        #head_right{
+            float: right;
+        }
+
+        #head_right>p{
+            float: right;
+            margin: 10px;
+            font-size: 16px;
+        }
+
+        #header_top{
+            background: #9c9c9c;
+            height: 30px;
+        }
+
+        #search{
+            padding: 40px;
+            text-align: center;
+            margin: 0px;
+        }
+        #search_btn{
+            width: 100px;
+        }
+
+        #search_inp{
+            width: 200px;
+        }
+        #bars{
+            background: #FF0000;
+            height: 30px;
+        }
+
+        #cate{
+            width: 100px;
+        }
+
+        #cate>li:hover{
+            float: left;
+            display: block;
+            width: 100px;
+
+        }
+        #cate_sub>li{
+            float: left;
+            position: relative;
+            left: 100px;
+        }
+
+        #detail_shops>a>img{
+            width: 200px;
+            height: 200px;
+
+        }
+    </style>
+    <script language="JavaScript">
+        let IMG_URL = 'http://127.0.0.1:8000/static/img/productSingle_middle/';
+        $(function () {
+            $('#search_btn').click(function () {
+                let keywords = $('#search_inp').val();
+
+                let SEARCH_URL = 'http://127.0.0.1:8000/home/search/?key=' + keywords;
+                $.getJSON(SEARCH_URL, function (result) {
+                    if (result.state === 200) {
+                        for (let index of result.data) {
+                            $('#search_shops')
+                                .append($('<li>')
+                                    .append($('<img>').attr('src', IMG_URL + index.imgs[0].id + '.jpg'))
+                                    .append($('<p>').text(index.name))
+                                    .append($('<p>').text(index.promote_price))
+                                    .append($('<a>').attr('href','product?pid='+index.id).text('天猫专卖')))
+                        }
+                    }
+                })
+            })
+        });
+
+        $(function () {
+            let CATE_URL = 'http://127.0.0.1:8000/home/cate';
+            $.getJSON(CATE_URL, function (result) {
+                if (result.state===200 && result.data != null){
+                    let $ul = $('#cate').mouseout(function () {
+                        $('#cate_sub').css('display','none')
+                    });
+                    for (let cate of result.data) {
+                        $ul.append($('<li>').mouseover(function () {
+                            $('#cate_sub').css('display', 'block')
+                        }).append($('<a>').text(cate.name)));
+                        for (let sub of cate.subs) {
+                            let $sub_ul = $('#cate_sub');
+                            $sub_ul.append($('<li>').append($('<a>').text(sub.name))).appendTo($ul)
+                        }
+                    }
+                }
+            })
+        });
+
+        $(function () {
+            let banner_url = 'http://127.0.0.1:8000/home/cate/';
+            let banner_urls = 'http://127.0.0.1:8000';
+            $.getJSON(banner_url, function (result) {
+                if (result.state === 200 && result.data != null && result.data.length>0){
+                    let $ul = $('#banners');
+                    for (let banner of result.banners) {
+
+                            $ul.append($('<li>')
+                            .append($('<a>')
+                                .append($('<img>')
+                                    .attr('src', banner_urls + banner.img))))
+                    }
+                }
+            })
+        });
+
+        $(function () {
+            let DETAIL_IMG_URL = 'http://127.0.0.1:8000/static/img/productSingle/';
+            let detail_url = 'http://127.0.0.1:8000/home/product/';
+            $.getJSON(detail_url, function (result) {
+                if (result.state === 200 && result.data != null){
+                    for (let product of result.data) {
+                        $('#detail_shops')
+                            .append($('<a>').attr('href', 'http://127.0.0.1:8000/static/detail.html/')
+                                .append($('<img>').attr('src',DETAIL_IMG_URL + product.imgs[0].id + '.jpg'))
+                                .append($('<p>').text(product.name))
+                                .append($('<p>').text(product.orignal_price))
+                                .append($('<p>').text(product.promote_price))
+                                .append($('<p>').text(product.stock)))
+                    }
+                }
+            })
+        })
+    </script>
+
+</head>
+<body>
+<div>
+    <div id="header">
+        <div id="header_top">
+            <div id="head_left">
+                <p>天猫首页</p>
+                <p>喵,欢迎来天猫</p>
+                <p><a href="/static/account/login.html">请登录</a></p>
+                <p><a href="/static/account/register.html">免费注册</a></p>
+            </div>
+            <div id="head_right">
+                <p><a href="/static/shop/order.html">我的订单</a></p>
+                <p><a href="/static/shop/shopcar.html">购物车</a></p>
+            </div>
+        </div>
+        <div>
+            <div id="search">
+                <input type="text" id="search_inp">
+                <button id="search_btn" name="搜索">搜索</button>
+            </div>
+            <div>
+                <ul id="search_shops">
+
+                </ul>
+            </div>
+            <div id="bars">
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <div id="cates">
+            <!- - 一级菜单 - - >
+            <ul id="cate">
+
+
+            </ul>
+            <!- - 二级菜单 - - >
+            <ul id="cate_sub">
+
+            </ul>
+        </div>
+        <div id="banner_lunbo">
+            <ul id="banners"></ul>
+        </div>
+        <div id="detail">
+            <ul id="detail_shops">
+
+
+            </ul>
+        </div>
+
+
+    </div>
+    <div id="footer"></div>
+
+
+
+
+
+</div>
+
+
+
+</body>
+</html>

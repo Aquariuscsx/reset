@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/common.css">
+    <script src="/static/js/jquery-3.3.1.js"></script>
+    <style type="text/css"></style>
+    <script language="JavaScript">
+        let detail_small_url = 'http://127.0.0.1:8000/static/img/productSingle_middle/';
+
+        let detail_img_url = 'http://127.0.0.1:8000/home/detail/' + window.location.search;
+        $(function () {
+            $.get(detail_img_url,function (result) {
+                if (result != null && result.data != null){
+                    show_shop_detail(result.data);
+                    let pid = result.data .id
+                }
+            })
+        });
+        let detail_big_url = 'http://127.0.0.1:8000/static/img/productSingle_middle/';
+        function show_shop_detail(imgs) {
+            for (let img of imgs) {
+                $('#big_img').append($('<li>').append($('<img>').attr('src', detail_big_url + img.img_list[0].id + '.jpg')))
+            }
+            for (let img of imgs[0].img_list) {
+                $('#small_img').append($('<li>').append($('<img>').attr('src', detail_big_url + img.id + '.jpg'))).mouseover(function () {
+                    $('#big_img').attr('src', $(this).attr('src'))
+                })
+            }
+        }
+    </script>
+</head>
+<body>
+<div>
+    <div id="shop_img">
+        <ul id="big_img"></ul>
+        <ul id="small_img"></ul>
+    </div>
+
+    <div>
+        <p id="shop_detail"></p>
+        <p>聚划算 此商品将参与聚划算 ,19小时后结束</p>
+    </div>
+</div>
+
+</body>
+</html>
